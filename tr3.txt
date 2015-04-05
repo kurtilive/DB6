@@ -1,0 +1,21 @@
+set term ^ ;
+create or alter trigger tr_cash_up for DEAL
+active after insert position 0
+as
+declare variable SUM_DEALS bigint;
+declare variable DISTRICTNEWDEAL int;
+declare variable TMPROOMS int;
+declare variable TMPS int;
+begin   
+for select DISTRICT from FLATS,DEAL where ID_KV = ID_DEALFLAT and ID_DEAL = new.ID_DEAL
+into :DISTRICTNEWDEAL
+do
+begin
+for select sum(DEALCASH),ROOMS,S from DEAL,FLATS where ID_KV = ID_DEALFLAT and DISTRICT = :DISTRICTNEWDEAL and DEALDATE between new.DEALDATE-30 and new.DEALDATE
+group by ROOMS,S
+into :SUM_DEALS,:TMPROOMS,:TMPS
+do
+if (:SUM_DEALS>30000000) then update FLATS set CASH = CASH*1.05 WHERE DISTRICT = :DISTRICTNEWDEAL and ROOMS = :TMPROOMS and S between :TMPS*0.9 and :TMPS*1.1;
+end
+end ^
+set term ; ^

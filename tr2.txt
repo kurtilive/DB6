@@ -1,0 +1,7 @@
+set term ^ ;
+create or alter trigger tr_del_deal for FLATS
+active before delete position 0
+as begin
+	delete from DEAL where ID_DEALFLAT = old.ID_KV;
+end ^
+set term ; ^

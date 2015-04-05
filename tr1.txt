@@ -1,0 +1,11 @@
+set term ^ ;
+create or alter trigger tr_gen_ppl_id for PEOPLES
+active before insert position 0
+as
+begin
+  if (new.ID_PPL is null) then
+  begin
+    new.ID_PPL = gen_id(gen_ppl_id, 1);
+  end
+end ^
+set term ; ^

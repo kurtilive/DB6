@@ -1,0 +1,16 @@
+set term ^ ;
+create or alter trigger tr_cash_down for DEAL
+active before insert position 0
+as
+declare variable SUMDEAL bigint;
+declare variable DISTRICTNEWDEAL int;
+begin   
+   select first 1 DISTRICT from FLATS,DEAL where ID_KV = new.ID_DEALFLAT
+   into DISTRICTNEWDEAL;      
+   execute procedure DISCFLAT(new.DEALDATE,DISTRICTNEWDEAL)
+   RETURNING_VALUES (SUMDEAL);
+   if (SUMDEAL<30000000) then
+       new.DEALCASH = new.DEALCASH*0.95;  
+end 
+^
+set term ; ^

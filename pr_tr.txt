@@ -1,0 +1,16 @@
+SET TERM ^ ;
+
+CREATE OR ALTER procedure DISCFLAT (NEWDEALDATE date,NEWDISTRICTFLAT int)
+returns (SUMDEAL bigint)
+as
+begin
+   for select sum(DEALCASH)
+   from DEAL,FLATS
+   where ID_KV = ID_DEALFLAT and DISTRICT = :NEWDISTRICTFLAT and DEALDATE between :NEWDEALDATE-30 and :NEWDEALDATE
+   into :SUMDEAL
+   do
+      suspend;
+end
+^
+
+SET TERM ; ^
